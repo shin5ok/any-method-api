@@ -3,29 +3,29 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
+var paths = []string{"/", "/:p"}
+var port = os.Getenv("PORT")
+
 func main() {
 	g := gin.Default()
 
-	g.GET("/", commonHandler)
-	g.POST("/", commonHandler)
-	g.PUT("/", commonHandler)
-	g.HEAD("/", commonHandler)
-	g.PATCH("/", commonHandler)
-	g.OPTIONS("/", commonHandler)
-	g.DELETE("/", commonHandler)
-	g.GET("/:p", commonHandler)
-	g.POST("/:p", commonHandler)
-	g.PUT("/:p", commonHandler)
-	g.HEAD("/:p", commonHandler)
-	g.PATCH("/:p", commonHandler)
-	g.OPTIONS("/:p", commonHandler)
-	g.DELETE("/:p", commonHandler)
+	for path := range paths {
+		p := string(path)
+		g.GET(p, commonHandler)
+		g.POST(p, commonHandler)
+		g.PUT(p, commonHandler)
+		g.HEAD(p, commonHandler)
+		g.PATCH(p, commonHandler)
+		g.OPTIONS(p, commonHandler)
+		g.DELETE(p, commonHandler)
+	}
 
-	g.Run(":8080")
+	g.Run(":" + port)
 }
 
 func commonHandler(c *gin.Context) {
