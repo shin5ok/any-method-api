@@ -14,15 +14,18 @@ var port = os.Getenv("PORT")
 func main() {
 	g := gin.Default()
 
-	for path := range paths {
-		p := string(path)
-		g.GET(p, commonHandler)
-		g.POST(p, commonHandler)
-		g.PUT(p, commonHandler)
-		g.HEAD(p, commonHandler)
-		g.PATCH(p, commonHandler)
-		g.OPTIONS(p, commonHandler)
-		g.DELETE(p, commonHandler)
+	for _, path := range paths {
+		g.GET(path, commonHandler)
+		g.POST(path, commonHandler)
+		g.PUT(path, commonHandler)
+		g.HEAD(path, commonHandler)
+		g.PATCH(path, commonHandler)
+		g.OPTIONS(path, commonHandler)
+		g.DELETE(path, commonHandler)
+	}
+
+	if port == "" {
+		port = "8080"
 	}
 
 	g.Run(":" + port)
