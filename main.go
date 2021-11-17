@@ -33,5 +33,5 @@ func commonHandler(c *gin.Context) {
 	headers := c.Request.Header
 	path := c.Request.URL.Path
 	log.Printf("path: %s", path)
-	c.JSON(http.StatusOK, gin.H{"method": method, "headers": headers, "path": path})
+	c.JSON(http.StatusOK, gin.H{"method": method, "request_headers": headers, "path": path})
 }
