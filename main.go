@@ -11,7 +11,7 @@ import (
 var paths = []string{"/", "/:p"}
 var port = os.Getenv("PORT")
 
-func main() {
+func createRoute() *gin.Engine {
 	g := gin.Default()
 
 	for _, path := range paths {
@@ -24,11 +24,16 @@ func main() {
 		g.DELETE(path, commonHandler)
 	}
 
+	return g
+
+}
+
+func main() {
 	if port == "" {
 		port = "8080"
 	}
 
-	g.Run(":" + port)
+	createRoute().Run(":" + port)
 }
 
 func commonHandler(c *gin.Context) {
