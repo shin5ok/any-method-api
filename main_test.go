@@ -25,7 +25,7 @@ func TestPing(t *testing.T) {
 		{"PUT": []string{"/", "/p"}},
 		{"DELETE": []string{"/", "/p"}},
 		{"OPTIONS": []string{"/", "/p"}},
-		{"OPTIONS": []string{"/", "/p"}},
+		{"HEAD": []string{"/", "/p"}},
 	}
 	for _, tests := range testCombi {
 
