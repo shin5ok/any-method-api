@@ -29,10 +29,10 @@ func TestPing(t *testing.T) {
 	}
 	for _, tests := range testCombi {
 
-		for k, paths := range tests {
-			fmt.Println(k, paths)
+		for method, paths := range tests {
+			fmt.Println(method, paths)
 			for _, p := range paths {
-				c.Request, _ = http.NewRequest(http.MethodGet, p, nil)
+				c.Request, _ = http.NewRequest(method, p, nil)
 				testg.ServeHTTP(w, c.Request)
 			}
 		}
