@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var paths = []string{"/", "/:p"}
+var paths = []string{"/", "/:p", "/:p/:v"}
 var port = os.Getenv("PORT")
 
 func CreateRoute() *gin.Engine {
