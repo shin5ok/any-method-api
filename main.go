@@ -1,8 +1,10 @@
 package main
 
 import (
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Depado/ginprom"
 	"github.com/gin-gonic/gin"
@@ -47,7 +49,18 @@ func main() {
 func commonHandler(c *gin.Context) {
 	method := c.Request.Method
 	headers := c.Request.Header
+	isSleep := c.Request.FormValue("s")
+	var r time.Duration
+	if isSleep != "" {
+		r = randSleeping()
+	}
 	path := c.Request.URL.Path
 	// log.Printf("path: %s", path)
-	c.JSON(http.StatusOK, gin.H{"method": method, "request_headers": headers, "path": path})
+	c.JSON(http.StatusOK, gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r})
+}
+
+func randSleeping() time.Duration {
+	r := time.Duration(rand.Intn(1000)) * time.Millisecond
+	time.Sleep(r)
+	return r
 }
