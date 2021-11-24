@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: any-method-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: any-method-api
+  template:
+    metadata:
+      labels:
+        app: any-method-api
+    spec:
+      containers:
+      - image: gcr.io/g-test1029/any-method-api:0.06
+        name: any-method-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress":true}'
+  labels:
+    app: any-method-api
+  name: any-method-api
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: any-method-api
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: any-method-api
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: any-method-api
+            port:
+              number: 80
+          # serviceName: any-method-api
+          # servicePort: 80
