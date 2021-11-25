@@ -13,6 +13,7 @@ import (
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var port = os.Getenv("PORT")
 var forceSleep = os.Getenv("FORCE_SLEEP")
+var isRand500 = os.Getenv("FORCE_500")
 
 func CreateRoute() *gin.Engine {
 	g := gin.Default()
@@ -50,18 +51,26 @@ func main() {
 func commonHandler(c *gin.Context) {
 	method := c.Request.Method
 	headers := c.Request.Header
-	isSleep := c.Request.FormValue("s")
+	code := http.StatusOK
 	var r time.Duration
-	if isSleep != "" || forceSleep != "" {
+	if forceSleep != "" {
 		r = randSleeping()
 	}
+	if isRand500 != "" {
+		if rand500() {
+			code = http.StatusInternalServerError
+		}
+	}
 	path := c.Request.URL.Path
-	// log.Printf("path: %s", path)
-	c.JSON(http.StatusOK, gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r})
+	c.JSON(code, gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r})
 }
 
 func randSleeping() time.Duration {
 	r := time.Duration(rand.Intn(1000)) * time.Millisecond
 	time.Sleep(r)
 	return r
+}
+
+func rand500() bool {
+	return rand.Intn(1000)%3 == 0
 }
