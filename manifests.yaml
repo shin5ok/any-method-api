@@ -49,4 +49,12 @@ spec:
             port:
               number: 80
           # serviceName: any-method-api
-          # servicePort: 80
+          # servicePort: 80apiVersion: v1
+---
+apiVersion: v1
+data:
+  FORCE_SLEEP: "1"
+kind: ConfigMap
+metadata:
+  name: api-params
+  namespace: default
