@@ -12,6 +12,7 @@ import (
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var port = os.Getenv("PORT")
+var forceSleep = os.Getenv("FORCE_SLEEP")
 
 func CreateRoute() *gin.Engine {
 	g := gin.Default()
@@ -51,7 +52,7 @@ func commonHandler(c *gin.Context) {
 	headers := c.Request.Header
 	isSleep := c.Request.FormValue("s")
 	var r time.Duration
-	if isSleep != "" {
+	if isSleep != "" || forceSleep != "" {
 		r = randSleeping()
 	}
 	path := c.Request.URL.Path
