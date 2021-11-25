@@ -21,6 +21,11 @@ spec:
               configMapKeyRef:
                 name: api-params
                 key: FORCE_SLEEP
+          - name: FORCE_500
+            valueFrom:
+              configMapKeyRef:
+                name: api-params
+                key: FORCE_500
 ---
 apiVersion: v1
 kind: Service
