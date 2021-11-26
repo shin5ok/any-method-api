@@ -13,8 +13,8 @@ import (
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var port = os.Getenv("PORT")
-var forceSleep = os.Getenv("FORCE_SLEEP")
-var Rand500div = os.Getenv("FORCE_500")
+var forceSleep = os.Getenv("SLEEP")
+var Rand500div = os.Getenv("RAND500DIV")
 
 func CreateRoute() *gin.Engine {
 	g := gin.Default()

@@ -64,8 +64,8 @@ spec:
 ---
 apiVersion: v1
 data:
-  FORCE_SLEEP: ""
-  FORCE_500: "1"
+  SLEEP: ""
+  RAND500DIV: "1"
 kind: ConfigMap
 metadata:
   name: api-params
