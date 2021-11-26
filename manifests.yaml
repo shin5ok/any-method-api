@@ -13,7 +13,7 @@ spec:
         app: any-method-api
     spec:
       containers:
-      - image: gcr.io/g-test1029/any-method-api:${TAG}
+      - image: gcr.io/${PROJECT}/any-method-api:${TAG}
         name: any-method-api
         env:
           - name: FORCE_SLEEP
