@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Depado/ginprom"
@@ -13,7 +14,7 @@ import (
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var port = os.Getenv("PORT")
 var forceSleep = os.Getenv("FORCE_SLEEP")
-var isRand500 = os.Getenv("FORCE_500")
+var Rand500div = os.Getenv("FORCE_500")
 
 func CreateRoute() *gin.Engine {
 	g := gin.Default()
@@ -56,8 +57,9 @@ func commonHandler(c *gin.Context) {
 	if forceSleep != "" {
 		r = randSleeping()
 	}
-	if isRand500 != "" {
-		if rand500() {
+	if Rand500div != "" {
+		n, _ := strconv.Atoi(Rand500div)
+		if rand500(n) {
 			code = http.StatusInternalServerError
 		}
 	}
@@ -71,6 +73,6 @@ func randSleeping() time.Duration {
 	return r
 }
 
-func rand500() bool {
-	return rand.Intn(1000)%3 == 0
+func rand500(n int) bool {
+	return rand.Intn(1000)%n == 0
 }
