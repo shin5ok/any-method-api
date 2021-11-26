@@ -26,6 +26,11 @@ spec:
               configMapKeyRef:
                 name: api-params
                 key: RAND500DIV
+          - name: DUMMY
+            valueFrom:
+              configMapKeyRef:
+                name: api-params
+                key: DUMMY
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +70,8 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: "2"
+  RAND500DIV: ""
+  DUMMY: "1"
 kind: ConfigMap
 metadata:
   name: api-params

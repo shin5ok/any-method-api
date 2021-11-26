@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var port = os.Getenv("PORT")
 var forceSleep = os.Getenv("SLEEP")
 var Rand500div = os.Getenv("RAND500DIV")
+var Dummy = os.Getenv("DUMMY")
 
 func CreateRoute() *gin.Engine {
 	g := gin.Default()
@@ -52,27 +54,43 @@ func main() {
 func commonHandler(c *gin.Context) {
 	method := c.Request.Method
 	headers := c.Request.Header
+	path := c.Request.URL.Path
 	code := http.StatusOK
 	var r time.Duration
+	var resultData = gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r}
+	if Dummy != "" {
+		dummy()
+	}
 	if forceSleep != "" {
 		r = randSleeping()
+		resultData["sleep"] = r
 	}
 	if Rand500div != "" {
 		n, _ := strconv.Atoi(Rand500div)
 		if rand500(n) {
 			code = http.StatusInternalServerError
+			resultData = gin.H{}
 		}
 	}
-	path := c.Request.URL.Path
-	c.JSON(code, gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r})
+	c.JSON(code, resultData)
 }
 
 func randSleeping() time.Duration {
-	r := time.Duration(rand.Intn(1000)) * time.Millisecond
+	r := time.Duration(genRand()) * time.Millisecond
 	time.Sleep(r)
 	return r
 }
 
 func rand500(n int) bool {
-	return rand.Intn(1000)%n == 0
+	return genRand()%n == 0
+}
+
+func dummy() {
+	genRand()
+}
+
+func genRand() int {
+	r := rand.Intn(1000)
+	log.Printf("generated rand value: %d\n", r)
+	return r
 }
