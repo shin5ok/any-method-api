@@ -16,16 +16,16 @@ spec:
       - image: gcr.io/${PROJECT}/any-method-api:${TAG}
         name: any-method-api
         env:
-          - name: FORCE_SLEEP
+          - name: SLEEP
             valueFrom:
               configMapKeyRef:
                 name: api-params
-                key: FORCE_SLEEP
-          - name: FORCE_500
+                key: SLEEP
+          - name: RAND500DIV
             valueFrom:
               configMapKeyRef:
                 name: api-params
-                key: FORCE_500
+                key: RAND500DIV
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +65,7 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: "1"
+  RAND500DIV: "2"
 kind: ConfigMap
 metadata:
   name: api-params
