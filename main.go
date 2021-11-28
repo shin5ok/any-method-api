@@ -68,7 +68,7 @@ func commonHandler(c *gin.Context) {
 	if Rand500div != "" {
 		n, _ := strconv.Atoi(Rand500div)
 		if rand500(n) {
-			code = http.StatusInternalServerError
+			code = 503
 			resultData = gin.H{}
 		}
 	}
