@@ -1,0 +1,7 @@
+version: "3"
+services:
+  loading:
+          # image: "loading"
+    build: .
+    environment:
+    - IP=$IP
