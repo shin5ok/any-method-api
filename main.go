@@ -21,6 +21,11 @@ var Dummy = os.Getenv("DUMMY")
 func CreateRoute() *gin.Engine {
 	g := gin.Default()
 
+	g.GET("/test", func(c *gin.Context) {
+		c.Header("X-Healthcheck", "always ok")
+		c.JSON(http.StatusOK, gin.H{})
+	})
+
 	for _, path := range paths {
 		g.GET(path, commonHandler)
 		g.POST(path, commonHandler)
