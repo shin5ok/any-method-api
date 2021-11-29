@@ -37,6 +37,8 @@ kind: Service
 metadata:
   annotations:
     cloud.google.com/neg: '{"ingress":true}'
+    # cloud.google.com/backend-config: '{"default": "custom-health-check"}'
+
   labels:
     app: any-method-api
   name: any-method-api
@@ -70,9 +72,20 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: "3"
-  DUMMY: ""
+  RAND500DIV: ""
+  DUMMY: "1"
 kind: ConfigMap
 metadata:
   name: api-params
   namespace: default
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: custom-health-check
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    port: 80
+    type: HTTP
+    requestPath: /test
