@@ -70,10 +70,12 @@ func commonHandler(c *gin.Context) {
 		r = randSleeping()
 		resultData["sleep"] = r
 	}
-	if n, err := strconv.Atoi(Rand500div); err != nil {
-		if rand500(n) {
-			code = 503
-			resultData = gin.H{}
+	if Rand500div != "" {
+		if n, err := strconv.Atoi(Rand500div); err != nil {
+			if rand500(n) {
+				code = http.StatusServiceUnavailable
+				resultData = gin.H{}
+			}
 		}
 	}
 	c.JSON(code, resultData)
