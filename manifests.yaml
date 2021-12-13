@@ -73,7 +73,7 @@ apiVersion: v1
 data:
   SLEEP: ""
   RAND500DIV: ""
-  DUMMY: "1"
+  DUMMY: ""
 kind: ConfigMap
 metadata:
   name: api-params
