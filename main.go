@@ -70,8 +70,7 @@ func commonHandler(c *gin.Context) {
 		r = randSleeping()
 		resultData["sleep"] = r
 	}
-	if Rand500div != "" {
-		n, _ := strconv.Atoi(Rand500div)
+	if n, err := strconv.Atoi(Rand500div); err != nil {
 		if rand500(n) {
 			code = 503
 			resultData = gin.H{}
