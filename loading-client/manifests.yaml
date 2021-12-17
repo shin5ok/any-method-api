@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loading-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loading-client
+  template:
+    metadata:
+      labels:
+        app: loading-client
+    spec:
+      containers:
+      - image: gcr.io/${PROJECT}/loading-client:${TAG}
+        name: loading-client
+        env:
+          - name: IP
+            value: ${IP}
