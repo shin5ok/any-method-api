@@ -75,10 +75,10 @@ func commonHandler(c *gin.Context) {
 	if Dummy != "" {
 		dummy()
 	}
-	if ForceSleep != "" {
-		r = randSleeping()
-		resultData["sleep"] = r
-	}
+	// if ForceSleep != "" {
+	// 	r = randSleeping()
+	// 	resultData["sleep"] = r
+	// }
 	if Rand500int >= 1 {
 		if isRand500(Rand500int) {
 			code = http.StatusServiceUnavailable
@@ -103,7 +103,7 @@ func dummy() {
 }
 
 func genRand() int {
-	r := rand.Intn(1000)
+	r := rand.Intn(100)
 	log.Printf("generated rand value: %d\n", r)
 	return r
 }
