@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/Depado/ginprom"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
@@ -20,12 +20,14 @@ var Rand500int = 0
 var Rand500div = os.Getenv("RAND500DIV")
 
 func CreateRoute() *gin.Engine {
-	log.Println(Rand500div)
+	log.Info().Str(
+		"random500div", Rand500div,
+	)
 	if Rand500div != "" {
 		if n, err := strconv.Atoi(Rand500div); err == nil {
 			Rand500int = n
 		} else {
-			log.Println(err)
+			log.Error().Str("error", err.Error())
 		}
 	}
 	g := gin.Default()
