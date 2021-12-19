@@ -21,13 +21,13 @@ var Rand500div = os.Getenv("RAND500DIV")
 
 func CreateRoute() *gin.Engine {
 	log.Info().Str(
-		"random500div", Rand500div,
-	)
+		"random", Rand500div,
+	).Msg("begin to create the route")
 	if Rand500div != "" {
 		if n, err := strconv.Atoi(Rand500div); err == nil {
 			Rand500int = n
 		} else {
-			log.Error().Str("error", err.Error())
+			log.Error().Msg("error:" + err.Error())
 		}
 	}
 	g := gin.Default()
