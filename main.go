@@ -104,6 +104,6 @@ func dummy() {
 
 func genRand() int {
 	r := rand.Intn(100)
-	log.Printf("generated rand value: %d\n", r)
+	// log.Printf("generated rand value: %d\n", r)
 	return r
 }
