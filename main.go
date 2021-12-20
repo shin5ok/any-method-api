@@ -19,6 +19,10 @@ var Dummy = os.Getenv("DUMMY")
 var Rand500int = 0
 var Rand500div = os.Getenv("RAND500DIV")
 
+func init() {
+	log.Info().Msg("init")
+}
+
 func CreateRoute() *gin.Engine {
 	log.Info().Str(
 		"random", Rand500div,
