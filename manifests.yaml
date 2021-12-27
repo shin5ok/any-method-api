@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: any-method-api
+  name: ${APPNAME}
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: any-method-api
+      app: ${APPNAME}
   template:
     metadata:
       labels:
-        app: any-method-api
+        app: ${APPNAME}
     spec:
       containers:
-      - image: gcr.io/${PROJECT}/any-method-api:${TAG}
-        name: any-method-api
+      - image: gcr.io/${PROJECT}/${APPNAME}:${TAG}
+        name: ${APPNAME}
         env:
           - name: SLEEP
             valueFrom:
@@ -40,21 +40,23 @@ metadata:
     cloud.google.com/backend-config: '{"default": "custom-health-check"}'
 
   labels:
-    app: any-method-api
-  name: any-method-api
+    app: ${APPNAME}
+  name: ${APPNAME}
 spec:
   ports:
   - port: 80
     protocol: TCP
     targetPort: 8080
   selector:
-    app: any-method-api
+    app: ${APPNAME}
   type: LoadBalancer
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: any-method-api
+  name: ${APPNAME}
+  # annotations:
+  #   kubernetes.io/ingress.global-static-ip-name: ${APPNAME}
 spec:
   rules:
   - http:
@@ -63,10 +65,10 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: any-method-api
+            name: ${APPNAME}
             port:
               number: 80
-          # serviceName: any-method-api
+          # serviceName: ${APPNAME}
           # servicePort: 80apiVersion: v1
 ---
 apiVersion: cloud.google.com/v1
@@ -83,7 +85,7 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: "2"
+  RAND500DIV: ""
   DUMMY: ""
 kind: ConfigMap
 metadata:
