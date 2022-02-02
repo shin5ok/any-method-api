@@ -9,6 +9,7 @@ import (
 
 	"github.com/Depado/ginprom"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -20,6 +21,10 @@ var Rand500int = 0
 var Rand500div = os.Getenv("RAND500DIV")
 
 func init() {
+	log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
+	zerolog.LevelFieldName = "severity"
+	zerolog.TimestampFieldName = "timestamp"
+	zerolog.TimeFieldFormat = time.RFC3339Nano
 	log.Info().Msg("init")
 }
 
