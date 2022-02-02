@@ -85,7 +85,7 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: ""
+  RAND500DIV: "${RAND}"
   DUMMY: ""
 kind: ConfigMap
 metadata:
