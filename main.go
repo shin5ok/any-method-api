@@ -96,6 +96,7 @@ func commonHandler(c *gin.Context) {
 			resultData = gin.H{}
 		}
 	}
+	log.Info().Str("Path", path).Str("Method", method).Send()
 	c.JSON(code, resultData)
 }
 
