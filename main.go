@@ -14,9 +14,10 @@ import (
 )
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
+var randValue int
 var port = os.Getenv("PORT")
-var randValue = 0
 var randDiv = os.Getenv("RAND_DIV")
+var defectMode = os.Getenv("MODE")
 
 func init() {
 	log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
@@ -82,9 +83,19 @@ func commonHandler(c *gin.Context) {
 	var r time.Duration
 	var resultData = gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r}
 	if randValue >= 1 {
-		if isRand(randValue) {
-			code = http.StatusServiceUnavailable
-			resultData = gin.H{}
+		switch defectMode {
+		case "sleep":
+			if isRand(randValue) {
+				r := randSleeping()
+				resultData["sleep"] = r.String()
+				log.Info().Str("wait duration", r.String()).Send()
+			}
+		case "error":
+			if isRand(randValue) {
+				code = http.StatusServiceUnavailable
+				resultData = gin.H{}
+			}
+		default:
 		}
 	}
 	log.Info().Str("Path", path).Str("Method", method).Send()
@@ -102,6 +113,6 @@ func isRand(n int) bool {
 }
 
 func genRand() int {
-	r := rand.Intn(100)
+	r := rand.Intn(1000-500) + 500
 	return r
 }
