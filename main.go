@@ -83,19 +83,15 @@ func commonHandler(c *gin.Context) {
 	code := http.StatusOK
 	var r time.Duration
 	var resultData = gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r}
-	if randValue > 0 {
+	if isRand(randValue) {
 		switch defectMode {
 		case "sleep":
-			if isRand(randValue) {
-				r := randSleeping()
-				resultData["sleep"] = r.String()
-				log.Info().Str("wait duration", r.String()).Send()
-			}
+			r := randSleeping()
+			resultData["sleep"] = r.String()
+			log.Info().Str("wait duration", r.String()).Send()
 		case "error":
-			if isRand(randValue) {
-				code = http.StatusServiceUnavailable
-				resultData = gin.H{}
-			}
+			code = http.StatusServiceUnavailable
+			resultData = gin.H{}
 		default:
 		}
 	}
@@ -110,6 +106,9 @@ func randSleeping() time.Duration {
 }
 
 func isRand(n int) bool {
+	if n == 0 {
+		return false
+	}
 	return genRand()%n == 0
 }
 
