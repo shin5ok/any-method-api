@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Depado/ginprom"
 	"github.com/gin-gonic/gin"
+	"github.com/penglongli/gin-metrics/ginmetrics"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -66,14 +66,21 @@ func main() {
 	}
 
 	g := CreateRoute()
+	forExporter := gin.Default()
 
-	p := ginprom.New(
-		ginprom.Engine(g),
-		ginprom.Subsystem("gin"),
-		ginprom.Path("/metrics"),
-	)
-	g.Use(p.Instrument())
-	g.Run(":" + servicePort)
+	m := ginmetrics.GetMonitor()
+	// use metric middleware without expose metric path
+	m.UseWithoutExposingEndpoint(g)
+	// set metric path expose to metric router
+	m.SetMetricPath("/metrics")
+	m.Expose(forExporter)
+
+	go func() {
+		_ = forExporter.Run(":10080")
+	}()
+
+	_ = g.Run(":" + servicePort)
+
 }
 
 func commonHandler(c *gin.Context) {
