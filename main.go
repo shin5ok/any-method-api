@@ -15,7 +15,8 @@ import (
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var randValue int
-var port = os.Getenv("PORT")
+var promPort = os.Getenv("PROM_PORT")
+var servicePort = os.Getenv("PORT")
 var randDiv = os.Getenv("RAND_DIV")
 var defectMode = os.Getenv("MODE")
 
@@ -60,8 +61,8 @@ func CreateRoute() *gin.Engine {
 }
 
 func main() {
-	if port == "" {
-		port = "8080"
+	if servicePort == "" {
+		servicePort = "8080"
 	}
 
 	g := CreateRoute()
@@ -72,7 +73,7 @@ func main() {
 		ginprom.Path("/metrics"),
 	)
 	g.Use(p.Instrument())
-	g.Run(":" + port)
+	g.Run(":" + servicePort)
 }
 
 func commonHandler(c *gin.Context) {
