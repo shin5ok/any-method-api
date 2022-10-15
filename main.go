@@ -83,7 +83,7 @@ func commonHandler(c *gin.Context) {
 	code := http.StatusOK
 	var r time.Duration
 	var resultData = gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r}
-	if randValue >= 1 {
+	if randValue > 0 {
 		switch defectMode {
 		case "sleep":
 			if isRand(randValue) {
