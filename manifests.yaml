@@ -16,11 +16,11 @@ spec:
       - image: gcr.io/${PROJECT}/${APPNAME}:${TAG}
         name: ${APPNAME}
         env:
-          - name: SLEEP
+          - name: MODE
             valueFrom:
               configMapKeyRef:
                 name: api-params
-                key: SLEEP
+                key: MODE
           - name: RAND_DIV
             valueFrom:
               configMapKeyRef:
@@ -63,8 +63,6 @@ spec:
             name: ${APPNAME}
             port:
               number: 80
-          # serviceName: ${APPNAME}
-          # servicePort: 80apiVersion: v1
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -79,9 +77,8 @@ spec:
 ---
 apiVersion: v1
 data:
-  SLEEP: ""
   RAND_DIV: "${RAND_DIV}"
-  DUMMY: ""
+  MODE: "${MODE}"
 kind: ConfigMap
 metadata:
   name: api-params
