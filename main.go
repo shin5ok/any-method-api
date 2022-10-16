@@ -65,21 +65,21 @@ func main() {
 		servicePort = "8080"
 	}
 
-	g := CreateRoute()
+	forService := CreateRoute()
 	forExporter := gin.Default()
 
 	m := ginmetrics.GetMonitor()
 	// use metric middleware without expose metric path
-	m.UseWithoutExposingEndpoint(g)
-	// set metric path expose to metric router
+	m.UseWithoutExposingEndpoint(forService)
 	m.SetMetricPath("/metrics")
+	m.SetDuration([]float64{0.1, 0.3, 1.2, 5, 10})
 	m.Expose(forExporter)
 
 	go func() {
 		_ = forExporter.Run(":10080")
 	}()
 
-	_ = g.Run(":" + servicePort)
+	_ = forService.Run(":" + servicePort)
 
 }
 
