@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +17,7 @@ import (
 
 var paths = []string{"/", "/:p1", "/:p1/:p2"}
 var randValue int
-var promPort = os.Getenv("PROM_PORT")
+var promPort = "10080"
 var servicePort = os.Getenv("PORT")
 var randDiv = os.Getenv("RAND_DIV")
 var defectMode = os.Getenv("MODE")
@@ -26,12 +28,15 @@ func init() {
 	zerolog.TimestampFieldName = "timestamp"
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 	log.Info().Msg("init")
+
 }
 
 func CreateRoute() *gin.Engine {
+
 	log.Info().Str(
 		"random", randDiv,
 	).Msg("begin to create the route")
+
 	if randDiv != "" {
 		if n, err := strconv.Atoi(randDiv); err == nil {
 			randValue = n
@@ -65,18 +70,27 @@ func main() {
 		servicePort = "8080"
 	}
 
-	forService := CreateRoute()
 	forExporter := gin.Default()
 
-	m := ginmetrics.GetMonitor()
+	forService := CreateRoute()
 	// use metric middleware without expose metric path
-	m.UseWithoutExposingEndpoint(forService)
+	gaugeMetric := &ginmetrics.Metric{
+		Type:        ginmetrics.Histogram,
+		Name:        "common_handler_latency_hist",
+		Description: "an example of gauge type metric",
+		Buckets:     []float64{0.1, 50, 200, 500, 800, 2000},
+		Labels:      []string{"actual_ms"},
+	}
+
+	m := ginmetrics.GetMonitor()
+	m.AddMetric(gaugeMetric)
 	m.SetMetricPath("/metrics")
 	m.SetDuration([]float64{0.1, 0.3, 1.2, 5, 10})
+	m.UseWithoutExposingEndpoint(forService)
 	m.Expose(forExporter)
 
 	go func() {
-		_ = forExporter.Run(":10080")
+		_ = forExporter.Run(":" + promPort)
 	}()
 
 	_ = forService.Run(":" + servicePort)
@@ -84,6 +98,20 @@ func main() {
 }
 
 func commonHandler(c *gin.Context) {
+	start := time.Now()
+	defer func(start time.Time) {
+		go func() {
+			end := time.Now()
+			sub := end.Sub(start)
+			uriStr := strings.Replace(c.Request.RequestURI, "/", "_", -1)
+			label := fmt.Sprintf("%s_%s_actual_ms", strings.ToLower(c.Request.Method), strings.ToLower(uriStr))
+			err := ginmetrics.GetMonitor().GetMetric("common_handler_latency_hist").Observe([]string{label}, float64(sub.Milliseconds()))
+
+			if err != nil {
+				log.Error().Err(err).Send()
+			}
+		}()
+	}(start)
 	method := c.Request.Method
 	headers := c.Request.Header
 	path := c.Request.URL.Path
@@ -102,7 +130,7 @@ func commonHandler(c *gin.Context) {
 		default:
 		}
 	}
-	log.Info().Str("Path", path).Str("Method", method).Send()
+	log.Info().Str("URI Path", path).Str("Method", method).Send()
 	c.JSON(code, resultData)
 }
 
