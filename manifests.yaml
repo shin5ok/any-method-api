@@ -80,7 +80,7 @@ spec:
 apiVersion: v1
 data:
   SLEEP: ""
-  RAND500DIV: "${RAND}"
+  RAND_DIV: "${RAND_DIV}"
   DUMMY: ""
 kind: ConfigMap
 metadata:
