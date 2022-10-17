@@ -78,7 +78,7 @@ func main() {
 		Type:        ginmetrics.Histogram,
 		Name:        "common_handler_latency_hist",
 		Description: "an example of gauge type metric",
-		Buckets:     []float64{0.1, 50, 200, 500, 800, 2000},
+		Buckets:     []float64{0.1, 10, 50, 100, 500, 1000, 2000, 3000},
 		Labels:      []string{"actual_ms"},
 	}
 
