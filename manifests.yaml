@@ -15,6 +15,13 @@ spec:
       containers:
       - image: gcr.io/${PROJECT}/${APPNAME}:${TAG}
         name: ${APPNAME}
+        ports:
+        - containerPort: 8080
+          name: service
+          protocol: TCP
+        - containerPort: 10080
+          name: monitor
+          protocol: TCP
         env:
           - name: MODE
             valueFrom:
