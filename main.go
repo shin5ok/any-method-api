@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	ginzerolog "github.com/dn365/gin-zerolog"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
 	"github.com/rs/zerolog"
@@ -47,6 +48,7 @@ func CreateRoute() *gin.Engine {
 		}
 	}
 	g := gin.Default()
+	g.Use(ginzerolog.Logger("gin"))
 
 	g.GET("/test", func(c *gin.Context) {
 		c.Header("X-Healthcheck", "always ok")
