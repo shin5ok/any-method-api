@@ -19,12 +19,12 @@ func TestPing(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	testCombi := []map[string][]string{
-		{"GET": []string{"/", "/p"}},
-		{"POST": []string{"/", "/p"}},
-		{"PUT": []string{"/", "/p"}},
-		{"DELETE": []string{"/", "/p"}},
-		{"OPTIONS": []string{"/", "/p"}},
-		{"HEAD": []string{"/", "/p"}},
+		{"GET": []string{"/", "/p", "/p/v"}},
+		{"POST": []string{"/", "/p", "/p/v"}},
+		{"PUT": []string{"/", "/p", "/p/v"}},
+		{"DELETE": []string{"/", "/p", "/p/v"}},
+		{"OPTIONS": []string{"/", "/p", "/p/v"}},
+		{"HEAD": []string{"/", "/p", "/p/v"}},
 	}
 	for _, tests := range testCombi {
 
