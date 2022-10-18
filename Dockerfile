@@ -10,5 +10,6 @@ FROM golang:1.19 AS runner
 COPY --from=builder /app/main /main
 RUN rm -f /dev/random && ln -s /dev/urandom /dev/random
 USER nobody
+ENV GIN_MODE release
 CMD ["/main"]
 
