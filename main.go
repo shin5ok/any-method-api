@@ -15,12 +15,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var paths = []string{"/", "/:p1", "/:p1/:p2"}
-var randValue int
-var promPort = "10080"
-var servicePort = os.Getenv("PORT")
-var randDiv = os.Getenv("RAND_DIV")
-var defectMode = os.Getenv("MODE")
+var (
+	paths       = []string{"/", "/:p1", "/:p1/:p2"}
+	randValue   int
+	promPort    = "10080"
+	servicePort = os.Getenv("PORT")
+	randDiv     = os.Getenv("RAND_DIV")
+	defectMode  = os.Getenv("MODE")
+)
 
 func init() {
 	log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
