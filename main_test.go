@@ -47,6 +47,7 @@ func TestPing(t *testing.T) {
 		{"DELETE": []string{"/p/v/w"}},
 		{"OPTIONS": []string{"/p/v/w"}},
 	}
+
 	for _, tests := range failTestCombi {
 
 		for method, paths := range tests {

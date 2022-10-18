@@ -23,6 +23,7 @@ var (
 	servicePort = os.Getenv("PORT")
 	randDiv     = os.Getenv("RAND_DIV")
 	defectMode  = os.Getenv("MODE")
+	metricName  = "common_handler_latency_hist"
 )
 
 func init() {
@@ -109,7 +110,7 @@ func commonHandler(c *gin.Context) {
 			sub := end.Sub(start)
 			uriStr := strings.Replace(c.Request.RequestURI, "/", "_", -1)
 			label := fmt.Sprintf("%s_%s_actual_ms", strings.ToLower(c.Request.Method), strings.ToLower(uriStr))
-			err := ginmetrics.GetMonitor().GetMetric("common_handler_latency_hist").Observe([]string{label}, float64(sub.Milliseconds()))
+			err := ginmetrics.GetMonitor().GetMetric(metricName).Observe([]string{label}, float64(sub.Milliseconds()))
 
 			if err != nil {
 				log.Error().Err(err).Send()
