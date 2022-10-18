@@ -40,4 +40,25 @@ func TestPing(t *testing.T) {
 		}
 
 	}
+	failTestCombi := []map[string][]string{
+		{"GET": []string{"/p/v/w"}},
+		{"POST": []string{"/p/v/w"}},
+		{"PUT": []string{"/p/v/w"}},
+		{"DELETE": []string{"/p/v/w"}},
+		{"OPTIONS": []string{"/p/v/w"}},
+	}
+	for _, tests := range failTestCombi {
+
+		for method, paths := range tests {
+			fmt.Println(method, paths)
+			for _, p := range paths {
+				w := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(w)
+				c.Request, _ = http.NewRequest(method, p, nil)
+				testg.ServeHTTP(w, c.Request)
+				assert.Equal(t, http.StatusNotFound, w.Code)
+			}
+		}
+
+	}
 }
