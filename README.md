@@ -29,10 +29,10 @@ curl http://$INGRESS_IP/foo/bar
 Add purposeful randomized latency from 500ms to 1000ms.
 ```
 # Add purposeful latency to aboud 50% responses
-RAND_DIV=2 envsubst < manifests.yaml | kubectl apply -f -
+RAND_DIV=2 MODE=sleep envsubst < manifests.yaml | kubectl apply -f -
 
 # Add purposeful latency to all responses
-RAND_DIV=1 envsubst < manifests.yaml | kubectl apply -f -
+RAND_DIV=1 MODE=sleep envsubst < manifests.yaml | kubectl apply -f -
 
 ```
 
