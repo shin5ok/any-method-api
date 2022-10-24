@@ -55,7 +55,7 @@ cd loading-client/
 bash ./build.sh
 ```
 
-## Run it to load to specified target
+## Run it to load the specified target
 Make sure if your current dir is 'loading-client'.
 ```
 IP=$INGRESS_IP envsubst < manifests.yaml | kubectl apply -f -
