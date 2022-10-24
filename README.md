@@ -6,7 +6,7 @@ export APPNAME=myapp
 export TAG=0.01
 ```
 ## Build container and Push it to GCR
-Run it on top dir.
+Run it in top dir.
 ```
 bash ./build.sh
 ```
@@ -60,3 +60,10 @@ Make sure if your current dir is 'loading-client'.
 ```
 IP=$INGRESS_IP envsubst < manifests.yaml | kubectl apply -f -
 ```
+
+# Configure PodMonitoring resource to collect metrics
+change dir to top dir,
+```
+kubectl apply -f podmonitoring.yaml
+```
+
