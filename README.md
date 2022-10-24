@@ -22,7 +22,6 @@ Just wait for deploying them completely.
 INGRESS_IP=$(kubectl get ing $APPNAME -o json | jq .status.loadBalancer.ingress[].ip -r)
 
 curl http://$INGRESS_IP/foo/bar
-
 ```
 
 ## Re-deploy pod with specified latency rate
