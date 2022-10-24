@@ -1,0 +1,63 @@
+# Set up application
+## Prepare environtment values
+```
+export PROJECT=<your project>
+export APPNAME=myapp
+export TAG=0.01
+```
+## Build container and Push it to GCR
+Run it on top dir.
+```
+bash ./build.sh
+```
+
+## Basic deploy
+```
+envsubst < manifests.yaml | kubectl apply -f -
+```
+Just wait for deploying them completely.
+
+## Just test
+```
+INGRESS_IP=$(kubectl get ing $APPNAME -o json | jq .status.loadBalancer.ingress[].ip -r)
+
+curl http://$INGRESS_IP/foo/bar
+
+```
+
+## Re-deploy pod with specified latency rate
+Add purposeful randomized latency from 500ms to 1000ms.
+```
+# Add purposeful latency to aboud 50% responses
+RAND_DIV=2 envsubst < manifests.yaml | kubectl apply -f -
+
+# Add purposeful latency to all responses
+RAND_DIV=1 envsubst < manifests.yaml | kubectl apply -f -
+
+```
+
+## Revert to normal application without latency
+```
+RAND_DIV= envsubst < manifests.yaml | kubectl apply -f -
+```
+
+
+# Set up loading client
+
+## Prepare environtment values, just in case.
+```
+export PROJECT=<your project>
+export TAG=0.01
+```
+
+## Build container and Push it to GCR
+```
+cd loading-client/
+bash ./build.sh
+```
+
+## Run it to load to specified target
+Make sure if your current dir is 'loading-client'.
+```
+IP=$INGRESS_IP envsubst < manifests.yaml | kubectl apply -f -
+```
