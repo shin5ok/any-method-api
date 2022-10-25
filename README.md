@@ -35,7 +35,7 @@ RAND_DIV=1 MODE=sleep envsubst < manifests.yaml | kubectl apply -f -
 ```
 If you specified MODE=error it would return 503 responses following to the RAND_DIV rate.
 
-## Revert to normal application without latency
+## Revert to normal application without latency or 503 error
 ```
 RAND_DIV= envsubst < manifests.yaml | kubectl apply -f -
 ```
