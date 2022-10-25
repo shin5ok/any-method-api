@@ -11,7 +11,7 @@ Run it in top dir.
 bash ./build.sh
 ```
 
-## Basic deploy
+## Normal deploy
 ```
 envsubst < manifests.yaml | kubectl apply -f -
 ```
