@@ -64,6 +64,6 @@ IP=$INGRESS_IP envsubst < manifests.yaml | kubectl apply -f -
 # Configure PodMonitoring resource to collect metrics
 change dir to top dir,
 ```
-envsubst < kubectl apply -f podmonitoring.yaml
+envsubst < podmonitoring.yaml | kubectl apply -f -
 ```
 
