@@ -153,6 +153,7 @@ func isDefeating(n int) bool {
 }
 
 func genRand() int {
+	// generating random int from 500 to 1000
 	r := rand.Intn(1000-500) + 500
 	return r
 }
