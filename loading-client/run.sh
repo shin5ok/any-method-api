@@ -1,7 +1,6 @@
 #!/bin/bash
-n=0
 waitseconds=${1:-1}
-echo $seconds
+n=0
 while :
 do
 	n=$(expr $n + 1)

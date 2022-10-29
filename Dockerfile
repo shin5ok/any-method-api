@@ -2,7 +2,6 @@ FROM golang:1.19 AS builder
 
 WORKDIR /app
 COPY . .
-# RUN go build -o main
 RUN GGO_ENABLED=0 GOOS=linux go build -o main
 
 FROM golang:1.19 AS runner
