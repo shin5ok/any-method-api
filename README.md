@@ -1,3 +1,10 @@
+# Preparation
+You need a GKE Cluster that you have authorization to control with kubectl.
+For example of setup command,
+```
+gcloud container clusters create my-cluster --zone=asia-northeast1
+```
+
 # Set up application
 ## Prepare environtment values
 ```
