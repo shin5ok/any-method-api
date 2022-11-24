@@ -12,6 +12,12 @@ export PROJECT=<your project>
 export APPNAME=myapp
 export TAG=0.01
 ```
+
+## Prepare a repo in your Artifact Registory
+```
+gcloud artifacts repositories create my-app --repository-format=docker --location=asia-northeast1
+```
+
 ## Build container and Push it to GCR
 Run it in top dir.
 ```
