@@ -13,7 +13,7 @@ spec:
         app: ${APPNAME}
     spec:
       containers:
-      - image: gcr.io/${PROJECT}/${APPNAME}:${TAG}
+      - image: ${APPIMAGE}
         name: ${APPNAME}
         ports:
         - containerPort: 8080
@@ -22,6 +22,7 @@ spec:
         - containerPort: 10080
           name: monitor
           protocol: TCP
+        imagePullPolicy: Always
         env:
           - name: MODE
             valueFrom:
