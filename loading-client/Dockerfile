@@ -1,5 +1,5 @@
-FROM golang:1.18-alpine AS builder
-RUN apk update && apk add git
+FROM golang:1.18 AS builder
+RUN apt update && apt -y install git
 RUN mkdir -p /app/src
 RUN git clone https://github.com/rakyll/hey.git /app/src/hey
 RUN cd /app/src/hey; go build -o hey
