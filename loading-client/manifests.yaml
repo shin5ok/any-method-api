@@ -13,8 +13,10 @@ spec:
         app: loading-client
     spec:
       containers:
-      - image: gcr.io/${PROJECT}/loading-client:${TAG}
+      - image: ${LOADINGIMAGE}
         name: loading-client
         env:
           - name: IP
             value: ${IP}
+        imagePullPolicy: Always
+
