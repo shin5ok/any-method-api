@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	paths       = []string{"/", "/:p1", "/:p1/:p2"}
+	paths       = []string{"/*path"}
 	randValue   int
 	promPort    = "10080"
 	servicePort = os.Getenv("PORT")
@@ -50,11 +50,6 @@ func CreateRoute() *gin.Engine {
 	}
 	g := gin.Default()
 	g.Use(ginzerolog.Logger("gin"))
-
-	g.GET("/test", func(c *gin.Context) {
-		c.Header("X-Healthcheck", "always ok")
-		c.JSON(http.StatusOK, gin.H{})
-	})
 
 	for _, path := range paths {
 		g.GET(path, commonHandler)
