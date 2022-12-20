@@ -23,7 +23,7 @@ prepare-repo:
 deploy-app:
 	APPNAME=$(APPNAME) APPIMAGE=$(APPIMAGE) envsubst < manifests.yaml | kubectl apply -f -
 
-.PHONY: deploy-loading
+.PHONY: deploy-loading-client
 deploy-loading:
 	IP=$(IP) LOADINGIMAGE=$(LOADINGIMAGE) envsubst < ./loading-client/manifests.yaml | kubectl apply -f -
 
