@@ -8,7 +8,7 @@ build-all: build-app build-loading-client
 .PHONY: build-app
 build-app:
 	sh build.sh $(APPIMAGE) > /dev/null
-	@echo "Image had been built it as [$(APPIMAGE)]"
+	@echo "Image had been built as [$(APPIMAGE)]"
 
 .PHONY: build-loading-client
 build-loading-client:
