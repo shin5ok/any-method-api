@@ -9,8 +9,6 @@ gcloud container clusters create my-cluster --zone=asia-northeast1 --enable-mana
 ## Prepare environtment values
 ```
 export PROJECT=<your project>
-export APPNAME=myapp
-export TAG=0.01
 ```
 
 ## Prepare a repo in your Artifact Registory
@@ -59,13 +57,11 @@ RAND_DIV= envsubst < manifests.yaml | kubectl apply -f -
 ## Prepare environtment values, just in case.
 ```
 export PROJECT=<your project>
-export TAG=0.01
 ```
 
 ## Build container and Push it to GCR
 ```
-cd loading-client/
-bash ./build.sh
+make build-loading-client
 ```
 
 ## Run it to load the specified target
@@ -77,6 +73,6 @@ IP=$INGRESS_IP envsubst < manifests.yaml | kubectl apply -f -
 # Configure PodMonitoring resource to collect metrics
 change dir to top dir,
 ```
-envsubst < podmonitoring.yaml | kubectl apply -f -
+kubectl apply -f podmonitoring.yaml
 ```
 

@@ -20,7 +20,7 @@ spec:
           name: service
           protocol: TCP
         - containerPort: 10080
-          name: monitor
+          name: metrics
           protocol: TCP
         imagePullPolicy: Always
         env:

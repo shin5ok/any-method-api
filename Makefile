@@ -2,8 +2,8 @@ APPNAME := any-method-api
 APPIMAGE := asia-northeast1-docker.pkg.dev/$(PROJECT)/my-app/$(APPNAME)
 LOADINGIMAGE := asia-northeast1-docker.pkg.dev/$(PROJECT)/my-app/loading-client
 
-.PHONY: all
-all: build-app build-loading-client
+.PHONY: build-all
+build-all: build-app build-loading-client
 
 .PHONY: build-app
 build-app:
@@ -26,3 +26,6 @@ deploy-app:
 .PHONY: deploy-loading
 deploy-loading:
 	IP=$(IP) LOADINGIMAGE=$(LOADINGIMAGE) envsubst < ./loading-client/manifests.yaml | kubectl apply -f -
+
+.PHONY: deploy-all
+deploy-all: deploy-app deploy-loading
