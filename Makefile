@@ -1,6 +1,6 @@
 APPNAME := any-method-api
-APPIMAGE := asia-northeast1-docker.pkg.dev/$(PROJECT)/my-app/$(APPNAME)
-LOADINGIMAGE := asia-northeast1-docker.pkg.dev/$(PROJECT)/my-app/loading-client
+APPIMAGE := asia-northeast1-docker.pkg.dev/$(GOOGLE_CLOUD_PROJECT)/my-app/$(APPNAME)
+LOADINGIMAGE := asia-northeast1-docker.pkg.dev/$(GOOGLE_CLOUD_PROJECT)/my-app/loading-client
 
 .PHONY: build-all
 build-all: build-app build-loading-client
