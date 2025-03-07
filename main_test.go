@@ -6,18 +6,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/assert/v2"
 )
 
-var testg *gin.Engine
+var testRouter *chi.Mux
 
 func TestPing(t *testing.T) {
-	if testg == nil {
-		testg = CreateRoute()
+	if testRouter == nil {
+		testRouter = CreateRoute()
 	}
 
-	gin.SetMode(gin.TestMode)
 	testCombi := []map[string][]string{
 		{"GET": []string{"/", "/p"}},
 		{"POST": []string{"/", "/p"}},
@@ -27,17 +26,14 @@ func TestPing(t *testing.T) {
 		{"HEAD": []string{"/", "/p"}},
 	}
 	for _, tests := range testCombi {
-
 		for method, paths := range tests {
 			fmt.Println(method, paths)
 			for _, p := range paths {
+				req := httptest.NewRequest(method, p, nil)
 				w := httptest.NewRecorder()
-				c, _ := gin.CreateTestContext(w)
-				c.Request, _ = http.NewRequest(method, p, nil)
-				testg.ServeHTTP(w, c.Request)
-				assert.Equal(t, http.StatusOK, w.Code)
+				testRouter.ServeHTTP(w, req)
+				assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 			}
 		}
-
 	}
 }

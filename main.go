@@ -1,19 +1,21 @@
 package main
 
 import (
+	"encoding/json"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/Depado/ginprom"
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-var paths = []string{"/", "/:p1", "/:p1/:p2"}
+var paths = []string{"/", "/{p1}", "/{p1}/{p2}"}
 var port = os.Getenv("PORT")
 var ForceSleep = os.Getenv("SLEEP")
 var Dummy = os.Getenv("DUMMY")
@@ -28,7 +30,7 @@ func init() {
 	log.Info().Msg("init")
 }
 
-func CreateRoute() *gin.Engine {
+func CreateRoute() *chi.Mux {
 	log.Info().Str(
 		"random", Rand500div,
 	).Msg("begin to create the route")
@@ -39,25 +41,31 @@ func CreateRoute() *gin.Engine {
 			log.Error().Msg("error:" + err.Error())
 		}
 	}
-	g := gin.Default()
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
-	g.GET("/test", func(c *gin.Context) {
-		c.Header("X-Healthcheck", "always ok")
-		c.JSON(http.StatusOK, gin.H{})
+	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Healthcheck", "always ok")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]interface{}{})
 	})
 
 	for _, path := range paths {
-		g.GET(path, commonHandler)
-		g.POST(path, commonHandler)
-		g.PUT(path, commonHandler)
-		g.HEAD(path, commonHandler)
-		g.PATCH(path, commonHandler)
-		g.OPTIONS(path, commonHandler)
-		g.DELETE(path, commonHandler)
+		r.Get(path, commonHandler)
+		r.Post(path, commonHandler)
+		r.Put(path, commonHandler)
+		r.Head(path, commonHandler)
+		r.Patch(path, commonHandler)
+		r.Options(path, commonHandler)
+		r.Delete(path, commonHandler)
 	}
 
-	return g
+	// Add prometheus metrics endpoint
+	r.Handle("/metrics", promhttp.Handler())
 
+	return r
 }
 
 func main() {
@@ -65,39 +73,46 @@ func main() {
 		port = "8080"
 	}
 
-	g := CreateRoute()
-
-	p := ginprom.New(
-		ginprom.Engine(g),
-		ginprom.Subsystem("gin"),
-		ginprom.Path("/metrics"),
-	)
-	g.Use(p.Instrument())
-	g.Run(":" + port)
+	r := CreateRoute()
+	log.Info().Msgf("Server starting on port %s", port)
+	http.ListenAndServe(":"+port, r)
 }
 
-func commonHandler(c *gin.Context) {
-	method := c.Request.Method
-	headers := c.Request.Header
-	path := c.Request.URL.Path
+func commonHandler(w http.ResponseWriter, r *http.Request) {
+	method := r.Method
+	headers := r.Header
+	path := r.URL.Path
 	code := http.StatusOK
-	var r time.Duration
-	var resultData = gin.H{"method": method, "request_headers": headers, "path": path, "sleep": r}
+	var sleep time.Duration
+
+	resultData := map[string]interface{}{
+		"method":          method,
+		"request_headers": headers,
+		"path":            path,
+		"sleep":           sleep,
+	}
+
 	if Dummy != "" {
 		dummy()
 	}
+
 	// if ForceSleep != "" {
-	// 	r = randSleeping()
-	// 	resultData["sleep"] = r
+	// 	sleep = randSleeping()
+	// 	resultData["sleep"] = sleep
 	// }
+
 	if Rand500int >= 1 {
 		if isRand500(Rand500int) {
 			code = http.StatusServiceUnavailable
-			resultData = gin.H{}
+			resultData = map[string]interface{}{}
 		}
 	}
+
 	log.Info().Str("Path", path).Str("Method", method).Send()
-	c.JSON(code, resultData)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(resultData)
 }
 
 func randSleeping() time.Duration {
