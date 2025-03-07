@@ -13,24 +13,27 @@ spec:
         app: ${APPNAME}
     spec:
       containers:
-      - image: gcr.io/${PROJECT}/${APPNAME}:${TAG}
+      - image: ${APPIMAGE}
         name: ${APPNAME}
+        ports:
+        - containerPort: 8080
+          name: service
+          protocol: TCP
+        - containerPort: 10080
+          name: metrics
+          protocol: TCP
+        imagePullPolicy: Always
         env:
-          - name: SLEEP
+          - name: MODE
             valueFrom:
               configMapKeyRef:
                 name: api-params
-                key: SLEEP
-          - name: RAND500DIV
+                key: MODE
+          - name: RAND_DIV
             valueFrom:
               configMapKeyRef:
                 name: api-params
-                key: RAND500DIV
-          - name: DUMMY
-            valueFrom:
-              configMapKeyRef:
-                name: api-params
-                key: DUMMY
+                key: RAND_DIV
 ---
 apiVersion: v1
 kind: Service
@@ -68,8 +71,6 @@ spec:
             name: ${APPNAME}
             port:
               number: 80
-          # serviceName: ${APPNAME}
-          # servicePort: 80apiVersion: v1
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -84,9 +85,8 @@ spec:
 ---
 apiVersion: v1
 data:
-  SLEEP: ""
-  RAND500DIV: "${RAND}"
-  DUMMY: ""
+  RAND_DIV: "${RAND_DIV}"
+  MODE: "${MODE}"
 kind: ConfigMap
 metadata:
   name: api-params

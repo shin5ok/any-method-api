@@ -18,12 +18,12 @@ func TestPing(t *testing.T) {
 	}
 
 	testCombi := []map[string][]string{
-		{"GET": []string{"/", "/p"}},
-		{"POST": []string{"/", "/p"}},
-		{"PUT": []string{"/", "/p"}},
-		{"DELETE": []string{"/", "/p"}},
-		{"OPTIONS": []string{"/", "/p"}},
-		{"HEAD": []string{"/", "/p"}},
+		{"GET": []string{"/", "/p", "/p/v"}},
+		{"POST": []string{"/", "/p", "/p/v"}},
+		{"PUT": []string{"/", "/p", "/p/v"}},
+		{"DELETE": []string{"/", "/p", "/p/v"}},
+		{"OPTIONS": []string{"/", "/p", "/p/v"}},
+		{"HEAD": []string{"/", "/p", "/p/v"}},
 	}
 	for _, tests := range testCombi {
 		for method, paths := range tests {
@@ -35,5 +35,27 @@ func TestPing(t *testing.T) {
 				assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 			}
 		}
+	}
+	failTestCombi := []map[string][]string{
+		{"GET": []string{"/p/v/w"}},
+		{"POST": []string{"/p/v/w"}},
+		{"PUT": []string{"/p/v/w"}},
+		{"DELETE": []string{"/p/v/w"}},
+		{"OPTIONS": []string{"/p/v/w"}},
+	}
+
+	for _, tests := range failTestCombi {
+
+		for method, paths := range tests {
+			fmt.Println(method, paths)
+			for _, p := range paths {
+				w := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(w)
+				c.Request, _ = http.NewRequest(method, p, nil)
+				testg.ServeHTTP(w, c.Request)
+				assert.Equal(t, http.StatusNotFound, w.Code)
+			}
+		}
+
 	}
 }
