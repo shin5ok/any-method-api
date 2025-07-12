@@ -108,7 +108,16 @@ func commonHandler(w http.ResponseWriter, r *http.Request) {
 			resultData = map[string]interface{}{}
 		}
 	}
-	log.Info().Str("Path", path).Str("Method", method).Send()
+	log.Info().
+		Dict("httpRequest", zerolog.Dict().
+			Str("requestMethod", r.Method).
+			Str("requestUrl", r.URL.String()).
+			Str("userAgent", r.UserAgent()).
+			Str("remoteIp", r.RemoteAddr).
+			Str("protocol", r.Proto),
+		).
+		Interface("headers", headers).
+		Msg("request log")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
