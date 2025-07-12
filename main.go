@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"math/rand"
 	"net/http"
 	"os"
@@ -108,7 +110,26 @@ func commonHandler(w http.ResponseWriter, r *http.Request) {
 			resultData = map[string]interface{}{}
 		}
 	}
-	log.Info().Str("Path", path).Str("Method", method).Send()
+
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to read request body")
+		http.Error(w, "can't read body", http.StatusBadRequest)
+		return
+	}
+	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	log.Info().
+		Dict("httpRequest", zerolog.Dict().
+			Str("requestMethod", r.Method).
+			Str("requestUrl", r.URL.String()).
+			Str("userAgent", r.UserAgent()).
+			Str("remoteIp", r.RemoteAddr).
+			Str("protocol", r.Proto),
+		).
+		Interface("headers", headers).
+		Bytes("body", bodyBytes).
+		Msg("request log")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
