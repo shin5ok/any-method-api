@@ -130,7 +130,15 @@ func commonHandler(c *gin.Context) {
 		default:
 		}
 	}
-	log.Info().Str("URI Path", path).Str("Method", method).Send()
+	log.Info().
+		Dict("httpRequest", zerolog.Dict().
+			Str("requestMethod", c.Request.Method).
+			Str("requestUrl", c.Request.RequestURI).
+			Int("status", code).
+			Str("userAgent", c.Request.UserAgent()).
+			Str("remoteIp", c.ClientIP()),
+		).
+		Msgf("request completed")
 	c.JSON(code, resultData)
 }
 
