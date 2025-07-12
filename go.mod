@@ -3,7 +3,7 @@ module any-method-api
 go 1.15
 
 require (
-	github.com/dn365/gin-zerolog v0.0.0-20171227063204-b43714b00db1 // indirect
+	github.com/dn365/gin-zerolog v0.0.0-20171227063204-b43714b00db1
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
