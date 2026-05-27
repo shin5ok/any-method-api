@@ -32,6 +32,17 @@ func init() {
 	log.Info().Msg("init")
 }
 
+func SecurityHeadersMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none';")
+		w.Header().Set("Referrer-Policy", "no-referrer")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func CreateRoute() *chi.Mux {
 	log.Info().Str(
 		"random", Rand500div,
@@ -45,6 +56,7 @@ func CreateRoute() *chi.Mux {
 		}
 	}
 	r := chi.NewRouter()
+	r.Use(SecurityHeadersMiddleware)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
@@ -75,22 +87,52 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	host := os.Getenv("HOST")
+	if host == "" {
+		host = "0.0.0.0" // Default to all interfaces for container environments
+	}
 
 	r := CreateRoute()
-	log.Info().Msgf("Server starting on port %s", port)
-	http.ListenAndServe(":"+port, r)
+
+	server := &http.Server{
+		Addr:              host + ":" + port,
+		Handler:           r,
+		ReadHeaderTimeout: 2 * time.Second,
+		ReadTimeout:       5 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       30 * time.Second,
+		MaxHeaderBytes:    1 << 20, // 1MB
+	}
+
+	log.Info().Msgf("Server starting on %s:%s", host, port)
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatal().Err(err).Msg("Server failed to start")
+	}
+}
+
+func maskHeaders(headers http.Header) http.Header {
+	masked := make(http.Header)
+	for k, vv := range headers {
+		switch http.CanonicalHeaderKey(k) {
+		case "Authorization", "Cookie", "Set-Cookie", "Proxy-Authorization", "X-Api-Key":
+			masked[k] = []string{"[REDACTED]"}
+		default:
+			masked[k] = vv
+		}
+	}
+	return masked
 }
 
 func commonHandler(w http.ResponseWriter, r *http.Request) {
 	method := r.Method
-	headers := r.Header
+	maskedHeaders := maskHeaders(r.Header)
 	path := r.URL.Path
 	code := http.StatusOK
 	var sleep time.Duration
 
 	resultData := map[string]interface{}{
 		"method":          method,
-		"request_headers": headers,
+		"request_headers": maskedHeaders,
 		"path":            path,
 		"sleep":           sleep,
 	}
@@ -111,10 +153,13 @@ func commonHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Limit request body size to 1MB to prevent memory exhaustion DoS
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to read request body")
-		http.Error(w, "can't read body", http.StatusBadRequest)
+		http.Error(w, "can't read body or body too large", http.StatusBadRequest)
 		return
 	}
 	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
@@ -127,7 +172,7 @@ func commonHandler(w http.ResponseWriter, r *http.Request) {
 			Str("remoteIp", r.RemoteAddr).
 			Str("protocol", r.Proto),
 		).
-		Interface("headers", headers).
+		Interface("headers", maskedHeaders).
 		Bytes("body", bodyBytes).
 		Msg("request log")
 

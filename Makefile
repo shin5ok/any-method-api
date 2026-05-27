@@ -29,3 +29,8 @@ deploy-loading-client:
 
 .PHONY: deploy-all
 deploy-all: deploy-app deploy-loading
+
+.PHONY: deploy-cloudrun
+deploy-cloudrun:
+	gcloud config set project my-argolis
+	gcloud run deploy $(APPNAME) --source . --region asia-northeast1 --allow-unauthenticated

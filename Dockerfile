@@ -1,7 +1,7 @@
-FROM golang:1.19 AS builder
+FROM golang:1.23 AS builder
 WORKDIR /app
 COPY . .
-RUN GGO_ENABLED=0 GOOS=linux go build -o main
+RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 FROM debian:buster-slim AS runner
 COPY --from=builder /app/main /main
